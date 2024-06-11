@@ -30,32 +30,30 @@ def editorial_create(db: Session, editorial: EditorialCreateSchema) -> Editorial
 
 
 def editorial_update(db: Session, editorial_id: int,  editorial: EditorialCreateSchema) -> EditorialSchema:
-    # busco en la base de datos el editorial buscando por el id que he recibido
+    # Buscar en la BD el editorial por el id que recibido
     obj_editorial = db.query(Editorial).filter(Editorial.id == editorial_id)
-    # print(obj_editorial.first() == None)
-    # si no encuentro el objeto en base de datos doy una excepción
+    # Si no encuentro el objeto en base de datos doy una excepción
     if obj_editorial.first() is None:
         raise HTTPException(status_code=404, detail="Editorial not found")
-    # transformo los datos recibiods para que lo entienda la base de datos
+    # TransformAR los datos recibidos para que lo entienda la BD
     datas = editorial.model_dump(exclude_unset=True)
-    # actualizo el objeto
+    # Actualizar el objeto
     obj_editorial.update(datas)
-    # guardo los cambio en base de datos
+    # Guardar los cambios en BD
     db.commit()
     return obj_editorial.first()
 
 
 def editorial_delete(db: Session, editorial_id: int) -> None:
-    # busco en la base de datos el editorial buscando por el id que he recibido
+    # Buscar en la BD el editorial por el id que recibido
     obj_editorial = db.query(Editorial).filter(Editorial.id == editorial_id)
-    # si no encuentro el objeto en base de datos doy una excepción
+    # Si no encuentro el objeto en base de datos doy una excepción
     if obj_editorial.first() is None:
         raise HTTPException(status_code=404, detail="Editorial not found")
-    # borra el objeto
+    # Borrar el objeto (si se ha encontrado la Id)
     obj_editorial.delete()
-    # guardo los cambios en base de datos
+    # Guardar los cambios en BD
     db.commit()
-    # return {"ok": True}
     return None
 
 
@@ -127,19 +125,5 @@ def create_user_item(db: Session, item: schemas.ItemCreate, user_id: int):
 
     
 https://fastapi.tiangolo.com/tutorial/sql-databases/#__tabbed_1_2
-
-https://sqlmodel.tiangolo.com/tutorial/fastapi/update/
-
-def update_hero(hero_id: int, hero: HeroUpdate):
-    with Session(engine) as session:
-        db_hero = session.get(Hero, hero_id)
-        if not db_hero:
-            raise HTTPException(status_code=404, detail="Hero not found")
-        hero_data = hero.model_dump(exclude_unset=True)
-        db_hero.sqlmodel_update(hero_data)
-        session.add(db_hero)
-        session.commit()
-        session.refresh(db_hero)
-        return db_hero
 
 """
