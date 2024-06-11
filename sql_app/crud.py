@@ -1,9 +1,7 @@
 from sqlalchemy.orm import Session
-# from . import models, schemas
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import HTTPException
 from models import Editorial
 from schemas import (
-    # EditorialBaseSchema,
     EditorialCreateSchema,
     EditorialSchema,
 

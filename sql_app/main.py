@@ -1,10 +1,15 @@
 import uvicorn
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI
 from sqlalchemy.orm import Session
 
-# from . import crud, models, schemas
-from crud import editorials_show, editorial_select, editorial_create, editorial_update, editorial_delete
+from crud import (editorials_show,
+                  editorial_select,
+                  editorial_create,
+                  editorial_update,
+                  editorial_delete,
+                  )
+
 from schemas import EditorialSchema, EditorialCreateSchema
 
 from database import Base
@@ -16,8 +21,6 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 # http://127.0.0.1:8000/docs
-
-# Dependency
 
 
 def get_db():
