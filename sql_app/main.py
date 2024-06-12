@@ -8,9 +8,12 @@ from crud import (editorials_show,
                   editorial_create,
                   editorial_update,
                   editorial_delete,
+                  author_show,
+                  author_select,
+                  author_create,
                   )
 
-from schemas import EditorialSchema, EditorialCreateSchema
+from schemas import EditorialSchema, EditorialCreateSchema, AuthorSchema, AuthorCreateSchema
 
 from database import Base
 from database import SessionLocal, engine
@@ -59,6 +62,24 @@ def update_editorial(id: int, editorial: EditorialCreateSchema, db: Session = De
 def delete_editorial(id: int, db: Session = Depends(get_db)):
     editorial_delete(db, id)
     return {"deleted Id"}
+
+
+@app.get("/authors/", response_model=list[AuthorSchema])
+def get_author(db: Session = Depends(get_db)):
+    authors = author_show(db)
+    return authors
+
+
+@app.get("/authors/{id}", response_model=AuthorSchema)
+def get_author_id(id: int, db: Session = Depends(get_db)):
+    authors = author_select(db, id)
+    return authors
+
+
+@app.post("/authors/", response_model=AuthorSchema)
+def create_author(author: AuthorCreateSchema, db: Session = Depends(get_db)) -> AuthorSchema:
+    new_author = author_create(db, author)
+    return new_author
 
 
 if __name__ == "__main__":

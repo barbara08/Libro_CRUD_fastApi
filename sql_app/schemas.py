@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from datetime import date
 
 
 class EditorialBaseSchema(BaseModel):
@@ -16,81 +17,37 @@ class EditorialSchema(EditorialBaseSchema):
         orm_mode = True
 
 
-"""
-class BookBase(BaseModel):
+class AuthorBaseSchema(BaseModel):
+    # id: int
+    name: str
+
+
+class AuthorCreateSchema(AuthorBaseSchema):
+    name: str
+
+
+class AuthorSchema(AuthorBaseSchema):
+    id: int
+    # book: list[BookSchema] = []
+
+    class Config:
+        orm_mode = True
+
+
+class BookBaseSchema(BaseModel):
     title: str
     page: int
-    edition_dte: Date
+    edition_date: date = None
     editorial_id: int
 
 
-class BookCreate(BookBase):
+class BookCreateSchema(BookBaseSchema):
     pass
 
 
-class Book(BookBase):
+class BookSchema(BookBaseSchema):
     id: int
     owner_id: int
 
     class Config:
         orm_mode = True
-
-
-class AuthorBase(BaseModel):
-    id: int
-    name: str
-
-
-class AuthorCreate(AuthorBase):
-    # password: str   no tiene psw
-    name: str
-
-
-class Author(AuthorBase):
-    id: int
-    book: list[Book] = []
-
-    class Config:
-        orm_mode = True
-
-
-"""
-"""
-EJEMPLO
-#book
-class ItemBase(BaseModel):
-    title: str
-    description: Union[str, None] = None
-
-
-class ItemCreate(ItemBase):
-    pass
-
-
-class Item(ItemBase):
-    id: int
-    owner_id: int
-
-    class Config:
-        orm_mode = True
-
-        ***
-
-#author
-class UserBase(BaseModel):
-    email: str
-
-
-class UserCreate(UserBase):
-    password: str
-
-
-class User(UserBase):
-    id: int
-    is_active: bool
-    items: list[Item] = []
-
-    class Config:
-        orm_mode = True
-
-"""

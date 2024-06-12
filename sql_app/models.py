@@ -17,7 +17,7 @@ class Author(Base):
     id = Column(Integer, nullable=True, autoincrement="auto", primary_key=True)
     name = Column(String)
 
-    book = relationship("Book", back_populates="owner")
+    # book = relationship("Book", back_populates="owner")
 
 
 class Book(Base):
@@ -27,7 +27,7 @@ class Book(Base):
     title = Column(String, nullable=True)
     pages = Column(Integer, nullable=True)
     edition_date = Column(Date)
-    editorial_id = Column(Integer, nullable=True)
-    owner_id = Column(Integer, ForeignKey("author.id"))
+    editorial_id = Column(Integer, ForeignKey("editorial.id"))
+    author_id = Column(Integer, ForeignKey("author.id"))
 
-    owner = relationship("Author", back_populates="book")
+    # owner = relationship("Author", back_populates="book")
