@@ -11,9 +11,16 @@ from crud import (editorials_show,
                   author_show,
                   author_select,
                   author_create,
+                  author_update,
+                  author_delete,
+                  book_show,
+                  book_create,
                   )
 
-from schemas import EditorialSchema, EditorialCreateSchema, AuthorSchema, AuthorCreateSchema
+from schemas import (EditorialSchema, EditorialCreateSchema,
+                     AuthorSchema, AuthorCreateSchema,
+                     BookSchema, BookCreateSchema,
+                     )
 
 from database import Base
 from database import SessionLocal, engine
@@ -80,6 +87,30 @@ def get_author_id(id: int, db: Session = Depends(get_db)):
 def create_author(author: AuthorCreateSchema, db: Session = Depends(get_db)) -> AuthorSchema:
     new_author = author_create(db, author)
     return new_author
+
+
+@app.put("/authors/{id}", response_model=AuthorSchema)
+def update_author(id: int, author: AuthorCreateSchema, db: Session = Depends(get_db)) -> AuthorSchema:
+    new_update_author = author_update(db, id, author)
+    return new_update_author
+
+
+@app.delete("/authors/{id}")
+def delete_author(id: int, db: Session = Depends(get_db)):
+    author_delete(db, id)
+    return {"deleted Id"}
+
+
+@app.get("/books/", response_model=list[BookSchema])
+def get_book(db: Session = Depends(get_db)):
+    books = book_show(db)
+    return books
+
+
+@app.post("/books/", response_model=BookSchema)
+def create_book(book: BookCreateSchema, db: Session = Depends(get_db)) -> BookSchema:
+    new_book = book_create(db, book)
+    return new_book
 
 
 if __name__ == "__main__":

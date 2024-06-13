@@ -37,17 +37,20 @@ class AuthorSchema(AuthorBaseSchema):
 class BookBaseSchema(BaseModel):
     title: str
     page: int
-    edition_date: date = None
+    edition_date: date
     editorial_id: int
+    author_id: int
 
 
 class BookCreateSchema(BookBaseSchema):
+    # title: str
     pass
 
 
 class BookSchema(BookBaseSchema):
     id: int
-    owner_id: int
+    # editorial_id: int
+    # author_id: int
 
     class Config:
         orm_mode = True

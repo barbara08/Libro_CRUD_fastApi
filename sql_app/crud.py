@@ -1,11 +1,13 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
-from models import Editorial, Author
+from models import Editorial, Author, Book
 from schemas import (
     EditorialCreateSchema,
     EditorialSchema,
     AuthorCreateSchema,
     AuthorSchema,
+    BookCreateSchema,
+    BookSchema,
 )
 
 
@@ -73,3 +75,55 @@ def author_create(db: Session, author: AuthorCreateSchema) -> AuthorSchema:
     db.commit()
     db.refresh(db_author)
     return db_author
+
+
+def author_update(db: Session, author_id: int,  author: AuthorCreateSchema) -> AuthorSchema:
+    # Buscar en la BD el author por el id que recibido
+    obj_author = db.query(Author).filter(Author.id == author_id)
+    # Si no encuentro el objeto en base de datos doy una excepción
+    if obj_author.first() is None:
+        raise HTTPException(status_code=404, detail="Author not found")
+    # Transformar los datos recibidos para que lo entienda la BD
+    datas = author.model_dump(exclude_unset=True)
+    # Actualizar el objeto
+    obj_author.update(datas)
+    # Guardar los cambios en BD
+    db.commit()
+    return obj_author.first()
+
+
+def author_delete(db: Session, author_id: int) -> None:
+    # Buscar en la BD el author por el id que recibido
+    obj_author = db.query(Author).filter(Author.id == author_id)
+    # Si no encuentro el objeto en base de datos doy una excepción
+    if obj_author.first() is None:
+        raise HTTPException(status_code=404, detail="Author not found")
+    # Borrar el objeto (si se ha encontrado la Id)
+    obj_author.delete()
+    # Guardar los cambios en BD
+    db.commit()
+    return None
+
+
+def book_show(db: Session):
+    return db.query(Book)
+
+
+def book_create(db: Session, book: BookCreateSchema) -> BookSchema:
+    select_editorial = db.get(Editorial, book.editorial_id)
+    if not select_editorial:
+        raise HTTPException(status_code=404, detail="Id Editorial not exit")
+    select_author = db.get(Author, book.author_id)
+    if not select_author:
+        raise HTTPException(status_code=404, detail="Id Author not exit")
+    db_book = Book(
+        title=book.title,
+        page=book.page,
+        edition_date=book.edition_date,
+        editorial_id=book.editorial_id,
+        author_id=book.author_id
+    )
+    db.add(db_book)
+    db.commit()
+    db.refresh(db_book)
+    return db_book
