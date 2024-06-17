@@ -14,7 +14,10 @@ from crud import (editorials_show,
                   author_update,
                   author_delete,
                   book_show,
+                  book_select,
                   book_create,
+                  book_update,
+                  book_delete,
                   )
 
 from schemas import (EditorialSchema, EditorialCreateSchema,
@@ -68,7 +71,7 @@ def update_editorial(id: int, editorial: EditorialCreateSchema, db: Session = De
 @app.delete("/editorials/{id}")  # response_model=EditorialSchema)
 def delete_editorial(id: int, db: Session = Depends(get_db)):
     editorial_delete(db, id)
-    return {"deleted Id"}
+    return {"deleted Editorial"}
 
 
 @app.get("/authors/", response_model=list[AuthorSchema])
@@ -98,7 +101,7 @@ def update_author(id: int, author: AuthorCreateSchema, db: Session = Depends(get
 @app.delete("/authors/{id}")
 def delete_author(id: int, db: Session = Depends(get_db)):
     author_delete(db, id)
-    return {"deleted Id"}
+    return {"deleted Author"}
 
 
 @app.get("/books/", response_model=list[BookSchema])
@@ -107,10 +110,28 @@ def get_book(db: Session = Depends(get_db)):
     return books
 
 
+@app.get("/books/{id}/", response_model=BookSchema)
+def get_book_id(id: int, db: Session = Depends(get_db)):
+    books = book_select(db, id)
+    return books
+
+
 @app.post("/books/", response_model=BookSchema)
 def create_book(book: BookCreateSchema, db: Session = Depends(get_db)) -> BookSchema:
     new_book = book_create(db, book)
     return new_book
+
+
+@app.put("/books/{id}", response_model=BookSchema)
+def update_book(id: int, book: BookCreateSchema, db: Session = Depends(get_db)) -> BookSchema:
+    new_update_book = book_update(db, id, book)
+    return new_update_book
+
+
+@app.delete("/books/{id}")
+def delete_book(id: int, db: Session = Depends(get_db)):
+    book_delete(db, id)
+    return {"deleted book"}
 
 
 if __name__ == "__main__":

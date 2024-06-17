@@ -109,6 +109,13 @@ def book_show(db: Session):
     return db.query(Book)
 
 
+def book_select(db: Session, book_id: int):
+    select_book = db.get(Book, book_id)
+    if not select_book:
+        raise HTTPException(status_code=404, detail="Id not exit")
+    return db.query(Book).filter(Book.id == book_id).first()
+
+
 def book_create(db: Session, book: BookCreateSchema) -> BookSchema:
     select_editorial = db.get(Editorial, book.editorial_id)
     if not select_editorial:
@@ -127,3 +134,31 @@ def book_create(db: Session, book: BookCreateSchema) -> BookSchema:
     db.commit()
     db.refresh(db_book)
     return db_book
+
+
+def book_update(db: Session, book_id: int,  book: BookCreateSchema) -> BookSchema:
+    # Buscar en la BD el book por el id que recibido
+    obj_book = db.query(Book).filter(Book.id == book_id)
+    # Si no encuentro el objeto en base de datos doy una excepción
+    if obj_book.first() is None:
+        raise HTTPException(status_code=404, detail="Book not found")
+    # Transformar los datos recibidos para que lo entienda la BD
+    datas = book.model_dump(exclude_unset=True)
+    # Actualizar el objeto
+    obj_book.update(datas)
+    # Guardar los cambios en BD
+    db.commit()
+    return obj_book.first()
+
+
+def book_delete(db: Session, book_id: int) -> None:
+    # Buscar en la BD el book por el id que recibido
+    obj_book = db.query(Book).filter(Book.id == book_id)
+    # Si no encuentro el objeto en base de datos doy una excepción
+    if obj_book.first() is None:
+        raise HTTPException(status_code=404, detail="Book not found")
+    # Borrar el objeto (si se ha encontrado la Id)
+    obj_book.delete()
+    # Guardar los cambios en BD
+    db.commit()
+    return None
